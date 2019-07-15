@@ -1,0 +1,16 @@
+<%
+	try {
+		
+		existedPersonID = Request.Query.GetProperty('id');
+		object = Request.Query.GetProperty('object');
+
+		doc = OpenDoc(UrlFromDocID(Int(object)));
+		doc.TopElem.person_id = Int(existedPersonID);
+		doc.Save();
+
+		Response.Write('Ok');
+		
+	} catch(err) {
+		Response.Write(err);
+	}
+%>

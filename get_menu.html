@@ -1,0 +1,31 @@
+﻿<meta charset="utf-8">
+<%
+	var iSite = 6033619777391194053;
+	
+	function extractChilds(block) {
+
+			childs = ArraySelectByKey(oMenu, block.id, 'parent_document_id');
+			childs = ArraySort(childs, "position", "+");
+			return childs;
+		
+	}
+	
+	var dSite = OpenDoc(UrlFromDocID(Int(iSite)));
+	var oMenu = dSite.TopElem.menus.GetChildByKey('header', 'id').documents;
+	var hMenu = [];
+	var jMenu = [];
+	
+	hMenu = ArraySelectByKey(oMenu, "", "parent_document_id");
+	hMenu = ArraySort(hMenu, "position", "+");
+	
+	for (elem in hMenu) {
+		
+		childs = extractChilds(elem);
+		jMenu.push({"block" : elem, "childs" : childs});
+		
+	}
+	
+	Response.Write(tools.object_to_text(jMenu, 'json'));
+	
+	
+%>

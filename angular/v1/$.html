@@ -1,0 +1,106 @@
+<%
+  Request.CheckLdsAuth();
+  var REQUEST = Request.Query;
+
+  var FUNC = REQUEST.GetOptProperty( 'func', 'DEFAULT' );
+
+  function RESPONSE( DATA ) {
+    try {
+      Response.Write(
+        EncodeCharset(
+          tools.object_to_text( DATA, 'json' )
+          , 'utf-8' )
+        , true
+      );
+    } catch( errSendResponse ) {
+      Response.Write(
+        EncodeCharset(
+          errSendResponse
+          ,'utf-8'
+         )
+        , true
+      );
+    }
+    Cancel();
+  }
+
+  function EXCEPTION( desc ){
+    RESPONSE( { err: true, desc: desc } );
+  }
+
+  function DEFAULT() {
+
+    function GET( SELECT, FROM, WHERE ) {
+      var SQL = 'sql: ';
+          SQL += SELECT;
+          SQL += '\n'
+          SQL += FROM;
+          SQL += '\n';
+          SQL += WHERE;
+
+      return XQuery( SQL );
+    }
+
+    var CATALOG = REQUEST.GetOptProperty( 'object', null )
+    var FIELDS = REQUEST.GetOptProperty( 'fields', '*' )
+    var FILTER = REQUEST.GetOptProperty( 'filter', '' );
+
+    var XPR_SELECT;
+    var XPR_FROM;
+    var XPR_WHERE;
+
+    var CATALOGS = [
+      'collaborator'
+      ,'position'
+      ,'subdivision'
+    ];
+
+    //Check catalog
+    if ( !CATALOG ) {
+      EXCEPTION( 'Не передан объект' );
+    }
+
+    //Assign fields
+    XPR_SELECT = 'SELECT ' + FIELDS;
+
+    for ( object in CATALOGS ) {
+      if ( object == CATALOG ) {
+        XPR_FROM = 'FROM ' + object + 's';
+        break;
+      }
+    }
+    if ( !XPR_FROM ) {
+      EXCEPTION( 'Недопустимый объект ' + CATALOG );
+    }
+
+    //Filtering, if required
+    if ( FILTER ) {
+      XPR_WHERE = 'WHERE 1=1'
+      try {
+        for ( expr in tools.read_object( FILTER ) ) {
+          XPR_WHERE += ' AND ' + expr;
+        }
+      } catch( errParseFilter ) {
+        EXCEPTION( errParseFilter );
+      }
+    } else {
+      XPR_WHERE = '';
+    }
+
+    RESPONSE( GET( XPR_SELECT, XPR_FROM, XPR_WHERE ) );
+
+  }
+
+  if ( FUNC == 'DEFAULT' ) {
+    DEFAULT();
+  } else {
+    var RESPONSE_OBJECT;
+    try {
+      EvalCodeUrl( 'methods/' + FUNC + '.js' );
+    } catch( errGetFunc ) {
+      EXCEPTION( 'Функции ' + FUNC + ' не существует.'+errGetFunc )
+    }
+      RESPONSE( RESPONSE_OBJECT );
+  }
+
+%>

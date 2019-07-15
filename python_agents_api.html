@@ -1,0 +1,57 @@
+<%
+	try {
+		
+		dPersonToDeleteID = Request.Query.GetProperty('did');
+		personToUpdateID = Request.Query.GetProperty('uid');
+		
+		dPersonToDelete = OpenDoc(UrlFromDocID(Int(dPersonToDeleteID)));
+		dPersonToUpdate = OpenDoc(UrlFromDocID(Int(personToUpdateID)));
+		
+		if (dPersonToUpdate.TopElem.code == dPersonToDelete.TopElem.code) {
+			Response.Write('Ok');
+		} else {
+						
+			// Обмен полями
+			
+			dPersonToUpdate.TopElem.firstname = dPersonToDelete.TopElem.firstname;
+			dPersonToUpdate.TopElem.lastname = dPersonToDelete.TopElem.lastname;
+			dPersonToUpdate.TopElem.middlename = dPersonToDelete.TopElem.middlename;
+			dPersonToUpdate.TopElem.code = dPersonToDelete.TopElem.code;
+			dPersonToUpdate.TopElem.position_id = dPersonToDelete.TopElem.position_id;
+			dPersonToUpdate.TopElem.position_parent_id = dPersonToDelete.TopElem.position_parent_id;
+			dPersonToUpdate.TopElem.org_id = dPersonToDelete.TopElem.org_id;
+			dPersonToUpdate.TopElem.birth_date = dPersonToDelete.TopElem.birth_date;
+			dPersonToUpdate.TopElem.phone = dPersonToDelete.TopElem.phone;
+			try {
+				dPersonToUpdate.TopElem.email = dPersonToDelete.email;
+				dPersonToUpdate.TopElem.access.web_banned = dPersonToDelete.access.web_banned;
+			} catch (errFeilds) {}
+			
+			if (dPersonToUpdate.TopElem.is_dismiss != dPersonToDelete.TopElem.is_dismiss) {
+				dPersonToUpdate.TopElem.is_dismiss = dPersonToDelete.TopElem.is_dismiss;
+				dPersonToUpdate.TopElem.login = dPersonToDelete.TopElem.login;
+			}
+			
+			//Обмен позициями
+			
+			try {
+				newPositionPersonToUpdate = OpenDoc(UrlFromDocID(Int(dPersonToDelete.TopElem.position_id)));
+				
+				newPositionPersonToUpdate.TopElem.basic_collaborator_id = dPersonToUpdate.TopElem.id;
+				
+				newPositionPersonToUpdate.Save();
+				dPersonToUpdate.Save();
+				
+			} catch (errPositions) {
+				
+			}
+			//Чистим лишнее
+			
+			DeleteDoc(UrlFromDocID(dPersonToDelete.TopElem.id));
+			
+			Response.Write('ok');
+		}
+	} catch(err) {
+		Response.Write(err);
+	}
+%>

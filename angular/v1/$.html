@@ -1,5 +1,27 @@
 <%
-  Request.CheckLdsAuth();
+  //Request.CheckLdsAuth();
+
+  DEBUG = false;
+
+  var __USER__ = Request.AuthUserID;
+
+  try {
+
+    if (!__USER__){
+      __USER__ = Request.Session.cur_user_id;
+    }
+
+    if (!__USER__){
+      __USER__ = Request.Session.Env.curUserID;
+    }
+
+  } catch( errAuthCheck ) {
+    if (!DEBUG){
+      errAuthCheck = 'Не переданы данные для авторизации'
+    }
+    Response.Write( tools.object_to_text( {err:true, desc: 'Что-то пошло не так.', detail: errAuthCheck}, 'json' ) )
+  }
+
   var REQUEST = Request.Query;
 
   var FUNC = REQUEST.GetOptProperty( 'func', 'DEFAULT' );
@@ -30,15 +52,38 @@
 
   function DEFAULT() {
 
+    function __pareseFields( sFields ) {
+      var aFields = sFields.split(',');
+      var str = '';
+      var I = 0;
+      for ( field in aFields ) {
+        I++;
+        s = Trim( field );
+        if ( StrBegins(s, '__str__') ) {
+          s = StrReplace( s, '__str__', '' );
+          s = 'CAST(' + s + ' AS VARCHAR) AS ' + s;
+        }
+        if ( I != 1 ) {
+          s = ',' + s;
+        }
+        str += s;
+      }
+      return str;
+    }
+
     function GET( SELECT, FROM, WHERE ) {
       var SQL = 'sql: ';
           SQL += SELECT;
-          SQL += '\n'
+          SQL += ' '
           SQL += FROM;
-          SQL += '\n';
+          SQL += ' ';
           SQL += WHERE;
 
-      return XQuery( SQL );
+      if ( DEBUG ){
+        return {d: XQuery( SQL ), q: SQL};
+      } else {
+        return XQuery( SQL );
+      }
     }
 
     var CATALOG = REQUEST.GetOptProperty( 'object', null )
@@ -53,6 +98,7 @@
       'collaborator'
       ,'position'
       ,'subdivision'
+      ,'qualification'
     ];
 
     //Check catalog
@@ -61,7 +107,8 @@
     }
 
     //Assign fields
-    XPR_SELECT = 'SELECT ' + FIELDS;
+    XPR_SELECT = 'SELECT ';
+    XPR_SELECT += FIELDS == '*' ? '*': __pareseFields(FIELDS);
 
     for ( object in CATALOGS ) {
       if ( object == CATALOG ) {
@@ -98,7 +145,7 @@
     try {
       EvalCodeUrl( 'methods/' + FUNC + '.js' );
     } catch( errGetFunc ) {
-      EXCEPTION( 'Функции ' + FUNC + ' не существует.'+errGetFunc )
+      EXCEPTION( 'Функции ' + FUNC + ' не существует, или результат её работы вернул ошибку: ' + errGetFunc )
     }
       RESPONSE( RESPONSE_OBJECT );
   }

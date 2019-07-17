@@ -1,1 +1,1 @@
-RESPONSE_OBJECT = { a: Request.AuthUserID }
+RESPONSE_OBJECT = { a: __USER__ }

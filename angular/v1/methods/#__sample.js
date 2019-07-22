@@ -6,4 +6,4 @@
     REQUEST — тут лежат все переданные параметры. Получать доступ к ним так: REQUEST.GetOptProperty( 'имя_переменной', 'альтернативное_значение')
 **/
 
-RESPONSE_OBJECT = {u: __USER__, r: REQUEST}
+RESPONSE_OBJECT = { u: __USER__, r: REQUEST }

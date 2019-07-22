@@ -1,7 +1,7 @@
 <%
   //Request.CheckLdsAuth();
 
-  DEBUG = false;
+  DEBUG = true;
 
   var __USER__ = Request.AuthUserID;
 
@@ -24,7 +24,7 @@
 
   var REQUEST = Request.Query;
 
-  var FUNC = REQUEST.GetOptProperty( 'func', 'DEFAULT' );
+  var FUNC = REQUEST.GetOptProperty( '$', 'DEFAULT' );
 
   function RESPONSE( DATA ) {
     try {
@@ -103,7 +103,11 @@
 
     //Check catalog
     if ( !CATALOG ) {
-      EXCEPTION( 'Не передан объект' );
+      if (!DEBUG) {
+        EXCEPTION( 'Не передан объект' )
+      } else {
+        RESPONSE( { query: Request.Query, form: Request.Form, body: Request.Body, method: Request.Method } );
+      }
     }
 
     //Assign fields
@@ -143,7 +147,7 @@
   } else {
     var RESPONSE_OBJECT;
     try {
-      EvalCodeUrl( 'methods/' + FUNC + '.js' );
+      EvalCodeUrl( 'methods/' + StrReplace( FUNC, '.', '/' ) + '.js' );
     } catch( errGetFunc ) {
       EXCEPTION( 'Функции ' + FUNC + ' не существует, или результат её работы вернул ошибку: ' + errGetFunc )
     }

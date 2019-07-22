@@ -2,7 +2,7 @@
 /**
   Один агрумент - fields;
   Строка полей через запятую без пробелов.
-  доступные поля в переменной __default_fields 
+  доступные поля в переменной __default_fields
 **/
 function __main__(){
   var __FIELDS__ = {
@@ -19,12 +19,13 @@ function __main__(){
     ,"dismiss_date": "cs.dismiss_date"
     ,"login": "cs.[login]"
     ,"current_state": "cs.current_state"
-    ,"service_number": "c.[data].value( '(//custom_elems/custom_elem[name=''tab_number'']/value)[1]', 'VARCHAR( 100 )' ) AS service_number"
-    ,"firstname": "c.[data].value( '(//firstname)[1]', 'VARCHAR( 100 )' ) AS firstname"
-    ,"lastname": "c.[data].value( '(//lastname)[1]', 'VARCHAR( 100 )' ) AS lastname"
-    ,"middlename": "c.[data].value( '(//middlename)[1]', 'VARCHAR( 100 )' ) AS middlename"
+    ,"service_number": "c.[data].value( '(collaborator/custom_elems/custom_elem[name=''tab_number'']/value)[1]', 'VARCHAR( 100 )' ) AS service_number"
+    ,"firstname": "c.[data].value( '(collaborator/firstname)[1]', 'VARCHAR( 100 )' ) AS firstname"
+    ,"lastname": "c.[data].value( '(collaborator/lastname)[1]', 'VARCHAR( 100 )' ) AS lastname"
+    ,"middlename": "c.[data].value( '(collaborator/middlename)[1]', 'VARCHAR( 100 )' ) AS middlename"
+    ,"role": "c.[data].value( '(collaborator/access/access_role)[1]', 'VARCHAR(20)' ) AS [role]"
   }
-  var __default_fields = "id,fullname,position_name,position_id,unitId,unit,is_dismiss,sex,birth_date,hire_date,dismiss_date,login,current_state,service_number,firstname,lastname,middlename"
+  var __default_fields = "id,fullname,position_name,position_id,unitId,unit,is_dismiss,sex,birth_date,hire_date,dismiss_date,login,current_state,service_number,firstname,lastname,middlename,role"
   var FIELDS = REQUEST.GetOptProperty( 'fields', __default_fields );
   var aFields = FIELDS.split( ',' );
   var SQL = 'sql: SELECT ';
@@ -40,4 +41,4 @@ function __main__(){
   SQL += ' FROM collaborators cs JOIN collaborator c ON cs.id = c.id WHERE cs.id = ' + __USER__;
   return XQuery( SQL );
 }
-RESPONSE_OBJECT = __main__();
+RESPONSE_OBJECT = ArrayFirstElem( __main__() );

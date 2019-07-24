@@ -6,12 +6,16 @@ function __main__() {
 
     var SQL = 'sql: ';
     SQL += 'SELECT crs.* FROM wt_flat.dbo.careers crs ';
-    if ( !role == 'admin' ) {
+    if ( role != 'admin' ) {
       SQL += 'JOIN wt_flat.dbo.chareer_access crsacs ON crs.access = crsacs.id '
       SQL += "WHERE crsacs.name = 'byrole' AND crsacs.value = " + SqlLiteral( role );
     }
     var R = XQuery( SQL );
-
+    if ( ArrayCount( R ) <= 0 ) {
+      return { access: false, desc: 'Для роли нет обучения' }
+    } else {
+      return { access: true, objects: R }
+    }
 }
 
-RESPONSE_OBJECT = { access: true }
+RESPONSE_OBJECT = __main__();

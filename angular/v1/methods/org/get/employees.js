@@ -3,8 +3,11 @@
 **/
 function __main__() {
 
-  var iManagerId = REQUEST.GetOptProperty( "manager_id", __USER__ );
+  if ( REQUEST.GetOptProperty( 'info', false ) == '' ) {
+    return [{ fields: "manager_id" }];
+  }
 
+  var iManagerId = REQUEST.GetOptProperty( "manager_id", __USER__ );
   var qManagedSubdivision = "sql: ";
   qManagedSubdivision += "DECLARE @managerId BIGINT = " + SqlLiteral( iManagerId );
   qManagedSubdivision += "

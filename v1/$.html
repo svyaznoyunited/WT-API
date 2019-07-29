@@ -46,7 +46,7 @@
     Cancel();
   }
 
-  function EXCEPTION( desc ){
+  function EXCEPTION( desc ) {
     RESPONSE( { err: true, desc: desc } );
   }
 
@@ -96,9 +96,9 @@
 
     var CATALOGS = [
       'collaborator'
-      ,'position'
-      ,'subdivision'
-      ,'qualification'
+      ,'subdivision_group_subdivision'
+      ,'position_common'
+      ,'wt_flat.dbo.wt_x_sap_org_delta'
     ];
 
     //Check catalog
@@ -112,11 +112,12 @@
 
     //Assign fields
     XPR_SELECT = 'SELECT ';
-    XPR_SELECT += FIELDS == '*' ? '*': __pareseFields(FIELDS);
+    XPR_SELECT += FIELDS == '*' ? '*': __pareseFields( FIELDS );
 
     for ( object in CATALOGS ) {
       if ( object == CATALOG ) {
-        XPR_FROM = 'FROM ' + object + 's';
+        ctname = StrBegins( object, 'wt_flat.dbo' ) ? object : object + 's'
+        XPR_FROM = 'FROM ' + ctname;
         break;
       }
     }

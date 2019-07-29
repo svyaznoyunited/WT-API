@@ -2,7 +2,11 @@ function __main__() {
   try {
     var dUser = tools.create_doc_by_name( 'collaborator' );
     var teUser = dUser.TopElem;
-    var data = tools.read_object( REQUEST.GetOptProperty( 'data' ) );
+    var data = tools.read_object( REQUEST.GetOptProperty( 'data', {} ) );
+
+    if ( !data && DEBUG ) {
+      EXCEPTION( 'Данные не переданы. Переменная data пуста. Нужен объект форматированый как строка.' );
+    }
 
     teUser.firstname = data.firstname;
     teUser.lastname = data.lastname;
@@ -17,15 +21,27 @@ function __main__() {
     dUser.BindToDb();
     dUser.Save();
 
+    sData = [
+      dUser.DocID
+      ,SqlLiteral( data.firstname )
+      ,SqlLiteral( data.middlename )
+      ,SqlLiteral( data.lastname )
+    ];
+
     deltaSQL = "sql: ";
     deltaSQL += "INSERT INTO wt_flat.dbo.wt_x_sap_org_delta( id, firstname, middlename, lastname ) ";
-    deltaSQL += "VALUES( "+dUser.DocID+", "+SqlLiteral(teUser.firstname)+", "+SqlLiteral(teUser.middlename)+", "+SqlLiteral(teUser.lastname)+" )";
+    deltaSQL += "VALUES( ";
+    deltaSQL += sData.join( ',' );
+    deltaSQL += " )";
     ArrayOptFirstElem( XQuery( deltaSQL ) );
 
-    return { err: false, desc: 'Пользователь создан!' }
+    return {
+      err: false
+      , desc: 'Пользователь создан!'
+    }
 
   } catch ( errCreateUser ) {
-    return { err: true, desc: errCreateUser }
+    EXCEPTION( errCreateUser );
   }
 }
 

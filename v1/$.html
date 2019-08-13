@@ -27,8 +27,18 @@
   }
 
   /* Read Object From Request */
-  function ROFR ( ParamName ) {
+  function ROFR( ParamName ) {
     return tools.read_object( Request.Query.GetOptProperty( ParamName, {} ) );
+  }
+  /* Get Property From Request */
+  function GPFR( ParamName, NullValue ) {
+    return Request.Query.GetOptProperty( ParamName, NullValue ? NullValue : '' );
+  }
+
+  function INFO( OBJ ) {
+    if ( GPFR( 'info', 'NullValue' ) == '' ) {
+      RESPONSE( OBJ );
+    }
   }
 
   function COMMITINSERT( SQL ) {
@@ -68,13 +78,16 @@
   if ( FUNC == 'default' ) {
     EvalCodeUrl( 'methods/default.js' );
   } else {
-    var RESPONSE_OBJECT;
+    var RESPONSE_OBJECT = {};
     try {
       EvalCodeUrl( 'methods/' + StrReplace( FUNC, '.', '/' ) + '.js' );
-    } catch( errGetFunc ) {
-      EXCEPTION( 'Функции ' + FUNC + ' не существует, или результат её работы вернул ошибку: ' + errGetFunc )
-    }
       RESPONSE( RESPONSE_OBJECT );
+    } catch( errGetFunc ) {
+      if ( !IsCancelError( errGetFunc ) ) {
+        EXCEPTION( String( errGetFunc ) );
+      }
+    }
+
   }
 
 %>

@@ -30,7 +30,7 @@ function __main__() {
     dUser.BindToDb();
     dUser.Save();
 
-    sData = [
+    aData = [
       dUser.DocID
       ,SqlLiteral( data.firstname )
       ,SqlLiteral( data.middlename )
@@ -39,10 +39,21 @@ function __main__() {
       ,SqlLiteral( data.phone )
     ];
 
+    aFields = [
+      'id'
+      ,'firstname'
+      ,'middlename'
+      ,'lastname'
+      ,'login'
+      ,'tab_number'
+    ];
+
     deltaSQL = "sql: ";
-    deltaSQL += "INSERT INTO wt_flat.dbo.wt_x_sap_org_delta( id, firstname, middlename, lastname, login, tab_number ) ";
+    deltaSQL += "INSERT INTO wt_flat.dbo.wt_x_sap_org_delta( ";
+    deltaSQL += aFields.join( ',' );
+    deltaSql += " ) ";
     deltaSQL += "VALUES( ";
-    deltaSQL += sData.join( ',' );
+    deltaSQL += aData.join( ',' );
     deltaSQL += " )";
     COMMITINSERT( deltaSQL );
 
@@ -52,7 +63,10 @@ function __main__() {
     }
 
   } catch ( errCreateUser ) {
-    EXCEPTION( 'Ошибка: ' + errCreateUser );
+    return {
+      err: true
+      , desc: errCreateUser
+    }
   }
 }
 

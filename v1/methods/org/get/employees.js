@@ -3,11 +3,9 @@
 **/
 function __main__() {
 
-  if ( REQUEST.GetOptProperty( 'info', false ) == '' ) {
-    return [{ fields: "manager_id" }];
-  }
+  INFO( { fields: "manager_id" } )
 
-  var iManagerId = REQUEST.GetOptProperty( "manager_id", __USER__ );
+  var iManagerId = GPFR( "manager_id", __USER__ );
   var qManagedSubdivision = "sql: ";
   qManagedSubdivision += "DECLARE @managerId BIGINT = " + SqlLiteral( iManagerId );
   qManagedSubdivision += "
@@ -27,7 +25,7 @@ function __main__() {
   var rManagedSubdivision = XQuery( qManagedSubdivision );
 
   if ( ArrayCount( rManagedSubdivision ) == 0 ) {
-    return { msg: "Person is not a manager", q: qManagedSubdivision };
+    return { err: true, msg: "Person is not a manager" };
   }
 
   /* Пока берём только первое упоминание :( */
@@ -60,7 +58,7 @@ function __main__() {
   var rEmployees = XQuery( qEmployees );
 
   if ( ArrayCount( rEmployees ) < 2 ) {
-    return { msg: "Person has no employees", q:[ qEmployees, qManagedSubdivision ] } ;
+    return { err: true, msg: "Person has no employees" } ;
   }
   return rEmployees;
 

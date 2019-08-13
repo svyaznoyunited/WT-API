@@ -26,10 +26,8 @@ function __main__(){
     ,"role": "c.[data].value( '(collaborator/access/access_role)[1]', 'VARCHAR(20)' ) AS [role]"
   }
   var __default_fields = "id,fullname,position_name,position_id,unitId,unit,is_dismiss,sex,birth_date,hire_date,dismiss_date,login,current_state,service_number,firstname,lastname,middlename,role"
-  if ( REQUEST.GetOptProperty( 'info', false ) == '' ) {
-    return [{ fields: __default_fields.split( ',' ) }];
-  }
-  var FIELDS = REQUEST.GetOptProperty( 'fields', __default_fields );
+  INFO( { fields: __default_fields.split( ',' ) } );
+  var FIELDS = GPFR( 'fields', __default_fields );
   var aFields = FIELDS.split( ',' );
   var SQL = 'sql: SELECT ';
   var I = 0;
@@ -42,6 +40,6 @@ function __main__(){
     }
   }
   SQL += ' FROM collaborators cs JOIN collaborator c ON cs.id = c.id WHERE cs.id = ' + __USER__;
-  return XQuery( SQL );
+  return ArrayFirstElem( XQuery( SQL ) );
 }
-RESPONSE_OBJECT = ArrayFirstElem( __main__() );
+RESPONSE_OBJECT =  __main__();

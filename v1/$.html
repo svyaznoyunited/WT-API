@@ -1,37 +1,13 @@
 <%
-  //Request.CheckLdsAuth();
-
-  DEBUG = true;
-
-  var __USER__ = Request.AuthUserID;
-
-  try {
-
-    if (!__USER__){
-      __USER__ = Request.Session.cur_user_id;
-    }
-
-    if (!__USER__){
-      __USER__ = Request.Session.Env.curUserID;
-    }
-
-  } catch( errAuthCheck ) {
-    if (!DEBUG){
-      errAuthCheck = 'Не переданы данные для авторизации'
-    }
-    Response.Write( tools.object_to_text( {err:true, desc: 'Что-то пошло не так.', detail: errAuthCheck}, 'json' ) )
-  }
-
-  var REQUEST = Request.Query;
-
-  var FUNC = REQUEST.GetOptProperty( '$', 'DEFAULT' );
+  DEBUG = false;
 
   function RESPONSE( DATA ) {
     try {
       Response.Write(
         EncodeCharset(
           tools.object_to_text( DATA, 'json' )
-          , 'utf-8' )
+          , 'utf-8'
+        )
         , true
       );
     } catch( errSendResponse ) {
@@ -46,105 +22,51 @@
     Cancel();
   }
 
-  function EXCEPTION( desc ) {
-    RESPONSE( { err: true, desc: desc } );
+  function EXCEPTION( DESC ) {
+    RESPONSE( { err: true, desc: DESC } );
   }
 
-  function DEFAULT() {
-
-    function __pareseFields( sFields ) {
-      var aFields = sFields.split(',');
-      var str = '';
-      var I = 0;
-      for ( field in aFields ) {
-        I++;
-        s = Trim( field );
-        if ( StrBegins(s, '__str__') ) {
-          s = StrReplace( s, '__str__', '' );
-          s = 'CAST(' + s + ' AS VARCHAR) AS ' + s;
-        }
-        if ( I != 1 ) {
-          s = ',' + s;
-        }
-        str += s;
-      }
-      return str;
-    }
-
-    function GET( SELECT, FROM, WHERE ) {
-      var SQL = 'sql: ';
-          SQL += SELECT;
-          SQL += ' '
-          SQL += FROM;
-          SQL += ' ';
-          SQL += WHERE;
-
-      if ( DEBUG ){
-        return {d: XQuery( SQL ), q: SQL};
-      } else {
-        return XQuery( SQL );
-      }
-    }
-
-    var CATALOG = REQUEST.GetOptProperty( 'object', null )
-    var FIELDS = REQUEST.GetOptProperty( 'fields', '*' )
-    var FILTER = REQUEST.GetOptProperty( 'filter', '' );
-
-    var XPR_SELECT;
-    var XPR_FROM;
-    var XPR_WHERE;
-
-    var CATALOGS = [
-      'collaborator'
-      ,'subdivision_group_subdivision'
-      ,'position_common'
-      ,'wt_flat.dbo.wt_x_sap_org_delta'
-    ];
-
-    //Check catalog
-    if ( !CATALOG ) {
-      if (!DEBUG) {
-        EXCEPTION( 'Не передан объект' )
-      } else {
-        RESPONSE( { query: Request.Query, form: Request.Form, body: Request.Body, method: Request.Method } );
-      }
-    }
-
-    //Assign fields
-    XPR_SELECT = 'SELECT ';
-    XPR_SELECT += FIELDS == '*' ? '*': __pareseFields( FIELDS );
-
-    for ( object in CATALOGS ) {
-      if ( object == CATALOG ) {
-        ctname = StrBegins( object, 'wt_flat.dbo' ) ? object : object + 's'
-        XPR_FROM = 'FROM ' + ctname;
-        break;
-      }
-    }
-    if ( !XPR_FROM ) {
-      EXCEPTION( 'Недопустимый объект ' + CATALOG );
-    }
-
-    //Filtering, if required
-    if ( FILTER ) {
-      XPR_WHERE = 'WHERE 1=1'
-      try {
-        for ( expr in tools.read_object( FILTER ) ) {
-          XPR_WHERE += ' AND ' + expr;
-        }
-      } catch( errParseFilter ) {
-        EXCEPTION( errParseFilter );
-      }
-    } else {
-      XPR_WHERE = '';
-    }
-
-    RESPONSE( GET( XPR_SELECT, XPR_FROM, XPR_WHERE ) );
-
+  /* Read Object From Request */
+  function ROFR ( ParamName ) {
+    return tools.read_object( Request.Query.GetOptProperty( ParamName, {} ) );
   }
 
-  if ( FUNC == 'DEFAULT' ) {
-    DEFAULT();
+  function COMMITINSERT( SQL ) {
+    try {
+      ArrayOptFirstElem( XQuery( SQL ) );
+      return true;
+    } catch( errCommitInsert ) {
+      if ( DEBUG ) {
+        return errCommitInsert;
+      }
+      return false;
+    }
+  }
+
+  var REQUEST = Request.Query;
+  var FUNC = REQUEST.GetOptProperty( '$', 'default' );
+  var __USER__ = Request.AuthUserID;
+
+  try {
+    if ( !__USER__ ){
+      __USER__ = Request.Session.cur_user_id;
+    }
+    if ( !__USER__ ){
+      __USER__ = Request.Session.Env.curUserID;
+    }
+  } catch( errAuthCheck ) {
+    if ( !DEBUG ) {
+      errAuthCheck = 'Не переданы данные для авторизации'
+    }
+    EXCEPTION({
+      err:true
+      ,desc: 'Что-то пошло не так...'
+      ,detail: errAuthCheck
+    });
+  }
+
+  if ( FUNC == 'default' ) {
+    EvalCodeUrl( 'methods/default.js' );
   } else {
     var RESPONSE_OBJECT;
     try {

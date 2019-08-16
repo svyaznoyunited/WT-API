@@ -1,6 +1,7 @@
 var data = ROFR( 'data' );
 var aData = [];
 
+aData.push( SqlLiteral( data.id ) );
 aData.push( data.obj_id );
 aData.push( SqlLiteral (data.field) );
 aData.push( SqlLiteral (data.value) );

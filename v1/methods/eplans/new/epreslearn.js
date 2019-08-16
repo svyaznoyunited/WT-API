@@ -1,6 +1,7 @@
 var data = ROFR( 'data' );
 var aData = [];
 
+aData.push( SqlLiteral( data.id ) );
 aData.push( data.step_edu_id );
 aData.push( data.assigned_education );
 aData.push( data.result_education );

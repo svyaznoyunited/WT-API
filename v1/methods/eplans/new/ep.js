@@ -1,8 +1,9 @@
 var data = ROFR( 'data' );
 var aData = [];
 
+aData.push( SqlLiteral( data.id ) );
 aData.push( SqlLiteral( data.name ) );
-aData.push( SqlLiteral (data.tech_name) );
+aData.push( SqlLiteral ( data.tech_name ) );
 aData.push( data.access );
 
 var SQL = "sql: ";

@@ -1,6 +1,7 @@
 var data = ROFR( 'data' );
 var aData = [];
 
+aData.push( SqlLiteral( data.id ) );
 aData.push( data.plan_id );
 aData.push( data.person_id );
 aData.push( data.current_state );

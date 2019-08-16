@@ -1,6 +1,7 @@
 var data = ROFR( 'data' );
 var aData = [];
 
+aData.push( SqlLiteral( data.id ) );
 aData.push( data.step_id );
 aData.push( data.is_complete );
 

@@ -1,10 +1,8 @@
 var data = ROFR( 'data' );
 
 var SQL = 'sql: ';
-SQL += "UPDATE wt_flat.dbo.education_plan SET ";
+SQL += "UPDATE wt_flat.dbo.access SET ";
 SQL += "name = " + SqlLiteral( data.name );
-SQL += ",tech_name = " + SqlLiteral (data.tech_name);
-SQL += ",access = " + data.access;
 SQL += ",archived = " + data.archived;
 SQL += " WHERE ID = " + SqlLiteral( data.id );
 

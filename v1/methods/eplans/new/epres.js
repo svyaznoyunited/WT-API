@@ -10,7 +10,7 @@ aData.push( data.is_complete );
 
 var SQL = 'sql: ';
 SQL += "INSERT INTO wt_flat.dbo.education_plan_result (plan_id, person_id, current_state, is_complete) ";
-SQL += "VALUES (" + aData.split( ',' ) + ") ";
+SQL += "VALUES (" + aData.join( ',' ) + ") ";
 
 if ( COMMITINSERT( SQL ) ) {
   RESPONSE_OBJECT = { result: 'ok' }

@@ -1,15 +1,12 @@
 var data = ROFR( 'data' );
-var aData = [];
-
-aData.push( data.plan_id );
-aData.push( data.person_id );
-aData.push( data.current_state );
-aData.push( data.is_complete );
 
 var SQL = 'sql: ';
-SQL += "UPDATE wt_flat.dbo.education_plan_result ";
-SQL += "SET (plan_id, person_id, current_state, is_complete) = (" + aData.split(',') + ") ";
-SQL += "WHERE ID = " + data.id;
+SQL += "UPDATE wt_flat.dbo.education_plan_result SET ";
+SQL += 'plan_id = ' + data.plan_id
+SQL += ',person_id = ' + data.person_id
+SQL += ',current_state = ' + data.current_state
+SQL += ',is_complete = ' + data.is_complete
+SQL += " WHERE ID = " + data.id;
 
 if ( COMMITINSERT( SQL ) ) {
   RESPONSE_OBJECT = { result: 'ok' }

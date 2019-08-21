@@ -7,14 +7,21 @@ function DEFAULT() {
     for ( field in aFields ) {
       I++;
       s = Trim( field );
+      a = '';
+      if ( StrContains( field, '__as__', true ) ) {
+        s = field.split( '__as__' )[0];
+        a = ' AS ' + field.split( '__as__' )[1];
+      }
       if ( StrBegins( s, '__str__' ) ) {
-        s = StrReplace( s, '__str__', '' );
-        s = 'CAST(' + s + ' AS VARCHAR) AS ' + s;
+        f = StrReplace( s, '__str__', '' );
+        s = 'CAST(' + f + ' AS VARCHAR) ';
+        s += a ? a : ' AS ' + f;
+        a = '';
       }
       if ( I != 1 ) {
         s = ',' + s;
       }
-      str += s;
+      str += s + a;
     }
     return str;
   }
@@ -49,6 +56,11 @@ function DEFAULT() {
     ,'subdivision_group_subdivision'
     ,'position_common'
     ,'wt_flat.dbo.wt_x_sap_org_delta'
+    ,'group'
+  	,'course'
+  	,'assessment'
+  	,'poll'
+    ,'wt_flat.dbo.education_plan'
   ];
 
   //Check catalog
@@ -67,7 +79,7 @@ function DEFAULT() {
   }
 
   //Assign fields
-  XPR_SELECT = 'SELECT ';
+  XPR_SELECT = 'SELECT';
   XPR_SELECT += ' TOP ' + LIMIT + ' ';
   XPR_SELECT += FIELDS == '*' ? '*': __pareseFields( FIELDS );
 

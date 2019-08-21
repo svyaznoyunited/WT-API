@@ -1,13 +1,10 @@
 var data = ROFR( 'data' );
-var aData = [];
-
-aData.push( data.step_id );
-aData.push( data.is_complete );
 
 var SQL = 'sql: ';
-SQL += "UPDATE wt_flat.dbo.education_plan_result_steps ";
-SQL += "SET (step_id, is_complete)  = (" + aData.split(',') + ") ";
-SQL += "WHERE ID = " + data.id;
+SQL += "UPDATE wt_flat.dbo.education_plan_result_steps SET ";
+SQL += "step_id = " + data.step_id
+SQL += ",is_complete = " + data.is_complete
+SQL += " WHERE ID = " + data.id;
 
 if ( COMMITINSERT( SQL ) ) {
   RESPONSE_OBJECT = { result: 'ok' }

@@ -7,8 +7,8 @@ aData.push( SqlLiteral ( data.tech_name ) );
 aData.push( data.access );
 
 var SQL = "sql: ";
-SQL += "INSERT INTO wt_flat.dbo.education_plan (name, tech_name, access) ";
-SQL += "VALUES (" + aData.split( ',' ) + ") ";
+SQL += "INSERT INTO wt_flat.dbo.education_plan (id, name, tech_name, access) ";
+SQL += "VALUES (" + aData.join( ',' ) + ") ";
 
 if ( COMMITINSERT( SQL ) ) {
   RESPONSE_OBJECT = { result: 'ok' }

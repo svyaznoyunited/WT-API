@@ -9,7 +9,7 @@ aData.push( SqlLiteral (data.value) );
 
 var SQL = 'sql: ';
 SQL += "INSERT INTO wt_flat.dbo.education_plan_success_creteria (obj_id, field, value) ";
-SQL += "VALUES (" + aData.split( ',' ) + ") "
+SQL += "VALUES (" + aData.join( ',' ) + ") "
 
 if ( COMMITINSERT( SQL ) ) {
   RESPONSE_OBJECT = { result: 'ok' }

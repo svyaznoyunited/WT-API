@@ -4,7 +4,7 @@ var aData = [];
 aData.push( SqlLiteral( data.id ) );
 aData.push( SqlLiteral( data.name ) );
 aData.push( SqlLiteral ( data.tech_name ) );
-aData.push( data.access );
+aData.push( SqlLiteral ( data.access ) );
 
 var SQL = "sql: ";
 SQL += "INSERT INTO wt_flat.dbo.education_plan (id, name, tech_name, access) ";

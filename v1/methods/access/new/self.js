@@ -3,10 +3,9 @@ var aData = [];
 
 aData.push( SqlLiteral( data.id ) );
 aData.push( SqlLiteral( data.name ) );
-aData.push( data.archived );
 
 var SQL = "sql: ";
-SQL += "INSERT INTO wt_flat.dbo.access ( id, name, archived ) ";
+SQL += "INSERT INTO wt_flat.dbo.access ( id, name ) ";
 SQL += "VALUES (" + aData.join( ',' ) + ") ";
 
 if ( COMMITINSERT( SQL ) ) {

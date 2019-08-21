@@ -5,7 +5,7 @@ SQL += "UPDATE wt_flat.dbo.education_plan_step_learnings SET ";
 SQL += "step_id = " + SqlLiteral( data.step_id )
 SQL += ",education_id = " + data.education_id
 SQL += ",education_type = " + SqlLiteral (data.education_type)
-SQL += ",access = " + data.access
+SQL += ",access = " + SqlLiteral ( data.access );
 SQL += ",archived = " + data.archived;
 SQL += " WHERE ID = " + SqlLiteral( data.id );
 

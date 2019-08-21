@@ -15,7 +15,7 @@ function main() {
   PLANOBJ.steps = [];
 
   var SQL = "sql: ";
-  SQL += "SELECT id, name, tech_name, CAST( access AS VARCHAR(30) ) AS access, ISNULL( archived, 0 ) AS archived FROM wt_flat.dbo.education_plan "
+  SQL += "SELECT id, name, tech_name, access, ISNULL( archived, 0 ) AS archived FROM wt_flat.dbo.education_plan "
   SQL += "WHERE id = " + SqlLiteral( planid );
   SQL += " AND ISNULL( archived, 0 ) = 0"
 
@@ -25,7 +25,7 @@ function main() {
   }
 
   SQL = "sql: ";
-  SQL += "SELECT id, plan_id, name, CAST( access AS VARCHAR(30) ) AS access, ISNULL( archived, 0 ) AS archived FROM wt_flat.dbo.education_plan_steps "
+  SQL += "SELECT id, plan_id, name, access, ISNULL( archived, 0 ) AS archived FROM wt_flat.dbo.education_plan_steps "
   SQL += "WHERE plan_id = " + SqlLiteral( planid );
   SQL += " AND ISNULL( archived, 0 ) = 0"
   steps = XQuery( SQL );
@@ -36,7 +36,7 @@ function main() {
 
   for ( elem in PLANOBJ.steps ) {
     SQL = "sql: ";
-    SQL += "SELECT id, step_id, CAST( education_id AS VARCHAR(30) ) AS education_id, education_type, CAST( access AS VARCHAR(30) ) AS access, ISNULL( archived, 0 ) AS archived ";
+    SQL += "SELECT id, step_id, CAST( education_id AS VARCHAR(30) ) AS education_id, education_type, access, ISNULL( archived, 0 ) AS archived ";
     SQL += "FROM wt_flat.dbo.education_plan_step_learnings ";
     SQL += "WHERE step_id = " + SqlLiteral( elem.step.id );
     SQL += " AND ISNULL( archived, 0 ) = 0"

@@ -61,6 +61,9 @@ function DEFAULT() {
   	,'assessment'
   	,'poll'
     ,'wt_flat.dbo.education_plan'
+    ,'wt_flat.dbo.access_catalogs'
+    ,'wt_flat.dbo.access_catalog_fields'
+    ,'wt_flat.dbo.access_operators'
   ];
 
   //Check catalog

@@ -1,6 +1,10 @@
 <%
   DEBUG = false;
 
+  function NEWID() {
+    return ArrayOptFirstElem( XQuery( "sql: SELECT NEWID() AS id" ) ).id;
+  }
+
   function RESPONSE( DATA ) {
     try {
       Response.Write(

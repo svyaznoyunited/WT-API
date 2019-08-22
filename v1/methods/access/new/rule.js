@@ -13,7 +13,7 @@ SQL += "INSERT INTO wt_flat.dbo.access_rules (id, access_id, [catalog_id], field
 SQL += "VALUES (" + aData.join( ',' ) + ") ";
 
 if ( COMMITINSERT( SQL ) ) {
-  RESPONSE_OBJECT = { result: 'ok', q: SQL }
+  RESPONSE_OBJECT = { result: 'ok' }
 } else {
   RESPONSE_OBJECT = { result: 'neok' }
 }

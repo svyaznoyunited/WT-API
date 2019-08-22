@@ -64,6 +64,7 @@ function DEFAULT() {
     ,'wt_flat.dbo.access_catalogs'
     ,'wt_flat.dbo.access_catalog_fields'
     ,'wt_flat.dbo.access_operators'
+    ,'wt_flat.dbo.access'
   ];
 
   //Check catalog

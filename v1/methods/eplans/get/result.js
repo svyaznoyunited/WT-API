@@ -12,9 +12,6 @@ function main() {
   PLANOBJ.plan = {};
   PLANOBJ.steps = [];
 
-
-
-
   var SQL = "sql: ";
   SQL += "SELECT ep.name, epr.* ";
   SQL += "FROM wt_flat.dbo.education_plan_result epr ";

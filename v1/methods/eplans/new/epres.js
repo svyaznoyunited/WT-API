@@ -1,7 +1,8 @@
 function main() {
   var TO = GPFR( 'to' );
   if ( !TO ) {
-    return { 'err': true, 'desc': 'To is required' }
+  //  return { 'err': true, 'desc': 'To is required' }
+    TO = __USER__;
   }
   var RESPONSE_OBJECT;
   var PLAN;
@@ -9,6 +10,13 @@ function main() {
   EvalCodeUrl( '../get/plan.js' );
   PLAN = RESPONSE_OBJECT;
 
+  var check = "sql: ";
+  check += "SELECT * FROM wt_flat.dbo.education_plan_result ";
+  check += "WHERE is_complete != 1 AND person_id = " + TO;
+  check += " AND plan_id = " + SqlLiteral( PLAN.plan.id );
+  if ( ArrayCount( XQuery( check ) ) > 0 ) {
+    return {err:true, desc: 'Этот план уже назначен'}
+  }
   if ( ArrayCount( PLAN.steps ) == 0 ) {
     return { 'err': true, 'desc': 'Plan is empty' }
   }
@@ -30,7 +38,7 @@ function main() {
     SqlLiteral( PLAN_RESULT.id )
     ,SqlLiteral( PLAN.plan.id )
     ,TO
-    ,'0'
+    ,'1'
     ,'GETDATE()'
     ,'NULL'
     ,'DATEADD( HOUR, '+PLAN.plan.expired_time+', GETDATE() )'
@@ -74,7 +82,7 @@ function main() {
       SqlLiteral( thisStepID )
       ,SqlLiteral( step.step.id )
       ,SqlLiteral( PLAN_RESULT.id )
-      ,'0'
+      ,'1'
       ,'GETDATE()'
       ,'NULL'
       ,'DATEADD( HOUR, '+step.step.expired_time+', GETDATE() )'
@@ -90,7 +98,7 @@ function main() {
         ,SqlLiteral( learning.education_type )
         ,'NULL'
         ,'NULL'
-        ,'0'
+        ,'1'
         ,'DATEADD( HOUR, '+learning.expired_time+', GETDATE() )'
       ];
       ResultLearnSQL += StrEnds(ResultLearnSQL, ' ') ? '' : ',';
@@ -103,7 +111,7 @@ function main() {
     && COMMITINSERT( ResultStepSQL )
     && COMMITINSERT( ResultLearnSQL )
   ) {
-    return {err: false}
+    return {err: false, planid: PLAN_RESULT.id}
   } else {
     return {err: true}
   }

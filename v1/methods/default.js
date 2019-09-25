@@ -1,5 +1,4 @@
 function DEFAULT() {
-
   function __pareseFields( sFields ) {
     var aFields = sFields.split(',');
     var str = '';
@@ -65,6 +64,7 @@ function DEFAULT() {
     ,'wt_flat.dbo.access_catalog_fields'
     ,'wt_flat.dbo.access_operators'
     ,'wt_flat.dbo.access'
+	,'education_method'
   ];
 
   //Check catalog

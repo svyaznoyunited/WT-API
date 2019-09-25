@@ -6,6 +6,7 @@
   }
 
   function RESPONSE( DATA ) {
+   Response.ContentType = 'application/json';
     try {
       Response.Write(
         EncodeCharset(
